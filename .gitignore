@@ -3,3 +3,5 @@
 /package-lock.json
 /node_modules/
 /.idea/discord.xml
+my_search.js
+userdata/urls.json
