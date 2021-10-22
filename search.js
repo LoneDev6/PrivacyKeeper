@@ -2,7 +2,7 @@ const https = require('https');
 const html = require('node-html-parser');
 
 const EACH_PAGE_RESULTS_COUNT = 10;
-const SLEEP_MS = 1500;
+const SLEEP_MS = 3000;
 
 exports.google = (searchTerm, pagesCount, stepCallback) => {
     return new Promise(async (resolve, reject) => {
