@@ -10,6 +10,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "node-html-parser": "^5.0.0"
+    "jsonfile": "^6.1.0",
+    "node-html-parser": "^5.0.0",
+    "readline-sync": "^1.4.10"
   }
 }

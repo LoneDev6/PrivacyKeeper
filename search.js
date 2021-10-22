@@ -2,7 +2,7 @@ const https = require('https');
 const html = require('node-html-parser');
 
 const EACH_PAGE_RESULTS_COUNT = 10;
-const SLEEP_MS = 2500;
+const SLEEP_MS = 1500;
 
 exports.google = (searchTerm, pagesCount, stepCallback) => {
     return new Promise(async (resolve, reject) => {
@@ -19,15 +19,13 @@ exports.google = (searchTerm, pagesCount, stepCallback) => {
         }
 
         const resultsObj = [];
-        let finishIndex = 0;
-
         searchTerm = escape(searchTerm);
         let finish = false;
-        for (let index = 0; index <= pagesCount && !finish; index += EACH_PAGE_RESULTS_COUNT)
+        for (let index = 0; index <= pagesCount && !finish; index++)
         {
             let options = {
                 host: "www.google.com",
-                path: "/search?q=" + searchTerm + "&start=" + index,
+                path: "/search?q=" + searchTerm + "&start=" + (index * EACH_PAGE_RESULTS_COUNT),
                 headers: {
                     "User-Agent": "Mozilla/5.0 (compatible; yeaboi/2.1;)",
                     'Cookie': "CONSENT=YES+1"
@@ -74,10 +72,13 @@ exports.google = (searchTerm, pagesCount, stepCallback) => {
                         }
                     });
 
-                    stepCallback(currentPageResults, `Waiting ${SLEEP_MS}ms for the next page. Current page: ${index / 10}, Found data: ${resultsObj.length}`)
+                    stepCallback(currentPageResults, {
+                        sleep_ms: SLEEP_MS,
+                        page: index,
+                        results_amount: resultsObj.length
+                    })
 
-                    finishIndex += EACH_PAGE_RESULTS_COUNT;
-                    if (currentPageResults.length === 0 || finishIndex > pagesCount)
+                    if (currentPageResults.length === 0)
                     {
                         finish = true;
                         resolve(resultsObj)
@@ -86,10 +87,11 @@ exports.google = (searchTerm, pagesCount, stepCallback) => {
             }).end();
             await sleep(SLEEP_MS);
         }
+        resolve(resultsObj)
     });
 }
 
-function sleep(ms) {
+let sleep = (ms) => {
     return new Promise((resolve) => {
         setTimeout(resolve, ms);
     });
